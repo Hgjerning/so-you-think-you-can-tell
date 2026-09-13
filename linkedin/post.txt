@@ -1,0 +1,9 @@
+Every autumn a chart goes round showing what stocks do around a US election. I redrew it with the one band that matters: what the S&P 500 does around nothing in particular.
+
+Six hypotheses, pre-registered and committed before a single number was computed. Presidential elections, Democrat vs Republican, the run-up, midterms, every calendar month, and Sell in May after it was published.
+
+Five fail. Post-midterm comes closest (+7.6% in 90 days, p 0.039, not enough). Sell in May has returned t 0.62 since the paper came out. One passes, and it was the one I predicted would fail: September.
+
+The method is cheap: compare the event window with ten thousand random windows of the same length. The market rose after most things.
+
+Full article with the charts below. Code, pre-registrations and every number: github.com/Hgjerning/so-you-think-you-can-tell

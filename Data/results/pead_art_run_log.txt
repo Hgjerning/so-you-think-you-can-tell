@@ -1,0 +1,34 @@
+quarterly EPS actuals, first vintage: 467169 rows, 16993 stocks, RptDate 1995-01-03 -> 2012-07-06
+events with SUE, in window, Global Developed members on RptDate: 136931
+            n  car-30_-1  car0_1  car2_60  n_valid_2_60  t_bmp_2_60
+decile                                                             
+1       13701    -0.0344 -0.0155  -0.0177         13404    -11.3284
+2       13679    -0.0191 -0.0084  -0.0174         13362    -11.9581
+3       13677    -0.0122 -0.0061  -0.0189         13322    -11.9832
+4       13681    -0.0103 -0.0050  -0.0183         13304    -11.7140
+5       13688    -0.0074 -0.0006  -0.0196         13364    -12.0340
+6       13671    -0.0031  0.0017  -0.0192         13353    -12.5479
+7       13673     0.0002  0.0043  -0.0160         13365    -10.1103
+8       13683     0.0017  0.0073  -0.0151         13398     -8.1700
+9       13668     0.0011  0.0090  -0.0143         13426     -8.2946
+10      13701     0.0072  0.0138  -0.0131         13506     -7.1317
+                                  0       1       2        3          4          5
+scope                           ALL    Asia  Europe  America  1997-2004  2005-2012
+n_events                     136822   18635   10822   107365      52378      84444
+d10_d1_-30_-1                0.0416  0.0293  0.0333    0.044     0.0612     0.0292
+d10_d1_0_1                   0.0293  0.0158   0.023   0.0314     0.0234     0.0329
+d10_d1_2_60                  0.0046  0.0232  0.0014    0.003       -0.0     0.0074
+t_-30_-1                    21.5021  5.2962  5.5284  20.1525    16.5205    13.8231
+t_0_1                       28.9191  7.7394  6.8644  26.9584    13.2706    26.9881
+t_2_60                       1.8222  3.3748  0.1602   1.0565    -0.0002     2.5855
+ct_alpha_annual              0.0274     NaN     NaN      NaN        NaN        NaN
+ct_t_nw                      1.4241     NaN     NaN      NaN        NaN        NaN
+ct_p_one_sided               0.0772     NaN     NaN      NaN        NaN        NaN
+ct_alpha_h1_annual           0.0075     NaN     NaN      NaN        NaN        NaN
+ct_t_h1                      0.2558     NaN     NaN      NaN        NaN        NaN
+ct_alpha_h2_annual           0.0537     NaN     NaN      NaN        NaN        NaN
+ct_t_h2                      2.1319     NaN     NaN      NaN        NaN        NaN
+long_only_d10_alpha_annual  -0.0789     NaN     NaN      NaN        NaN        NaN
+long_only_t                 -3.1082     NaN     NaN      NaN        NaN        NaN
+legibility                     PASS     NaN     NaN      NaN        NaN        NaN
+verdict                        fail     NaN     NaN      NaN        NaN        NaN

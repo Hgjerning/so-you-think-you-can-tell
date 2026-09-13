@@ -1,0 +1,5 @@
+__pycache__/
+*.pyc
+Data/*_daily_close.csv
+Data/*_adjclose.csv
+Data/art_cache/

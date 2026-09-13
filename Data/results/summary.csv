@@ -1,0 +1,13 @@
+trial,hypothesis,n,statistic,placebo_mean,placebo_sd,p,note,passes_gate
+P3-1,"presidential post [+1,+60] vs placebo",25,0.021700015332886447,0.01922080801198008,0.018666267765233308,0.8868113188681132,,fail
+P3-2,"post [+1,+60] Democrat - Republican winner",25,-0.015668909277008605,0.0,,0.6157384261573843,"D mean 0.0142 (n 13), R mean 0.0298 (n 12)",fail
+P3-2 (report),"same, excluding 2000 and 2020",23,-0.032134952540392704,0.0,,0.31226877312268775,,
+P3-3,"presidential pre [-60,0] vs placebo",25,0.012372030396632643,0.019549524027693582,0.01882644428704195,0.688931106889311,,fail
+P3-3 (report),"pre [-60,0] Democrat - Republican INCUMBENT",25,0.037076562268251824,0.0,,0.2081791820817918,,
+P3-4,"midterm post [+1,+90] vs placebo, 1930-2022",24,0.07586639056876054,0.02875426564532984,0.022576920435854294,0.038696130386961305,,fail
+P3-4 (report),"midterm post [+1,+90], Goldman window 1974-2022",13,0.08463350705954158,0.028503625202602113,0.03082169998839484,0.06829317068293171,,
+P3-5,any calendar month unusual (Bonferroni 12 + same sign in both halves),1185,-0.01926742852248279,,,0.001189391095376191,"most extreme month 9, passes_gate=True; months clearing Bonferroni: [9]; passing gate: [9]",PASS
+P3-6,"Sell in May winter - summer, 2003-2025 (post-publication, GATE)",23,0.0163417654245924,0.0,,0.5397659598632204,"t 0.62; winter mean 0.0590, summer mean 0.0426, share winter>summer 0.52",fail
+P3-6 (report),"Sell in May winter - summer, 1928-2025 full",98,0.027428575161653423,0.0,,0.06862020235649888,"t 1.84; winter mean 0.0521, summer mean 0.0246, share winter>summer 0.59",
+P3-6 (report),"Sell in May winter - summer, 1950-2025",76,0.048655985021220864,0.0,,0.0017320831267763608,"t 3.25; winter mean 0.0695, summer mean 0.0208, share winter>summer 0.62",
+P3-6 (report),"Sell in May winter - summer, 1928-2002 pre-publication",75,0.030828530147685475,0.0,,0.08733873813928726,"t 1.73; winter mean 0.0499, summer mean 0.0191, share winter>summer 0.61",

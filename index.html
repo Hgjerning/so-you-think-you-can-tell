@@ -1,5 +1,11 @@
+<!doctype html>
+<html lang="en">
+<head>
 <title>So You Think You Can Tell</title>
-<meta name="description" content="Six pre-registered tests of US election and calendar effects on the S&P 500, 1927-2026, judged against placebo windows.">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>body{margin:0;font-family:system-ui,sans-serif;font-size:14px;background:#f3f4f7}img{max-width:100%}[hidden]{display:none!important}</style>
+<meta name="description" content="Twelve pre-registered tests of US election, calendar and earnings-surprise effects, 1927-2026, judged against placebo windows and a stated gate.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300;1,9..144,600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
@@ -58,8 +64,10 @@ td.num, th.num { text-align:right; font-family:"IBM Plex Mono",monospace; }
 hr { border:0; border-top:1px solid var(--rule); margin:3rem 0; }
 ul { padding-left:1.2rem; } li { margin-bottom:0.35rem; }
 a { color:var(--event); }
-@media (prefers-reduced-motion: reduce) { * { transition:none !important; } }
-</style>
+@media (prefers-reduced-motion: reduce) { * { transition:none !important; } }</style>
+</head>
+<body>
+
 <div class="wrap">
 <div class="cover" id="cover"></div>
 <div class="eyebrow">Project3 Event Studies · S&amp;P 500 price index, 1927-12-30 to 2026-09-11 · pre-registered 2026-09-13</div>
@@ -159,7 +167,7 @@ a { color:var(--event); }
 <li><strong>Guards.</strong> The placebo test was run on synthetic random walks before it saw real data: on a driftless walk random events reject at the nominal rate; on a walk with strong drift and no event effect it must not reject, which the first version did on a single draw and now checks as a rate over 200 event sets; an injected +4% after 25 events is recovered at p&nbsp;&lt;&nbsp;0.01.</li>
 <li><strong>What was not done.</strong> No second window after seeing the data. No other index. No total-return series (dividends would raise every window by roughly the yield pro rata and not change a sign). No costs, because nothing here is a strategy.</li>
 </ul>
-<p class="cap">Code, pre-registration, ledger and every CSV behind these charts: <em>Project3 Event Studies</em>, commit of 2026-09-13. Title after a song by Pink Floyd; the question it asks is the same one.</p>
+<p class="cap">Code, pre-registrations, ledger and every CSV behind these charts are public: <a href="https://github.com/Hgjerning/so-you-think-you-can-tell">github.com/Hgjerning/so-you-think-you-can-tell</a>. Title after a song by Pink Floyd; the question it asks is the same one.</p>
 </div>
 </div>
 
@@ -345,3 +353,6 @@ bandChart('c_mid74', D.mid74, D.band_mid74, {label:'S&P 500 around midterm elect
 })();
 })();
 </script>
+
+</body>
+</html>
