@@ -154,7 +154,7 @@ a {{ color:var(--event); }}
 </style>
 <div class="wrap">
 <div class="cover" id="cover"></div>
-<div class="eyebrow">Project3 Event Studies · S&amp;P 500 price index, {first} to {last} · pre-registered 2026-09-13</div>
+<div class="eyebrow">Project3 Event Driven Strategies · S&amp;P 500 price index, {first} to {last} · pre-registered 2026-09-13</div>
 <h1>So You Think You Can Tell</h1>
 <p class="dek">Every autumn a chart goes round showing what stocks do around an election. Here are the same charts drawn with the one band that matters: what the S&amp;P 500 does around <em>nothing in particular</em>.</p>
 

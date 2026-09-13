@@ -1,0 +1,91 @@
+Every autumn a chart goes round showing what the stock market does around an election. Here are the same charts drawn with the one band that matters: what the S&P 500 does around nothing in particular.
+
+The chart that started this shows the S&P 500 "around midterm elections since 1974". A dashed line at election day, an average that climbs afterwards, and a shaded band marked 10th and 90th percentile. The band is real. It is the spread of the thirteen individual midterm years around their own average. It tells you that elections differ from each other, which nobody doubted. It does not tell you whether the average is unusual, because it never asks what the index does in a window of the same length opened on any other day.
+
+That second question is the whole test, and it is cheap to run. Take the statistic you care about, say the mean 90-day return after 24 midterm elections. Open 24 windows of 90 days at random dates in the same history, take their mean, and repeat ten thousand times. That is the distribution of "24 random windows". If the election mean sits in its middle, the election did nothing the calendar was not already doing. The S&P 500 rose in the sixty trading days after most things.
+
+I wrote down six hypotheses with their windows, samples and pass thresholds, and committed them to a repository before computing any number. The commit is the pre-registration. The threshold is p < 0.0083, which is 5% divided by six. I also wrote down what I expected each one to do, and I score myself at the end.
+
+Presidential elections: the average is the drift
+
+Twenty-five elections, 1928 to 2024. The sixty trading days after election day returned +2.2% on average. Twenty-five random 60-day windows return +1.9% on average. Placebo p-value 0.887. Nothing happened.
+
+The sixty days before the election, the "sideways into the vote" story, returned +1.2% against a placebo mean of +2.0%, p 0.689. Slightly below the drift, well inside the noise.
+
+>>> INSERT IMAGE HERE: 01_presidential.png <<<
+
+Democrat or Republican: twenty-five coin flips
+
+After a Democrat won, the next sixty days returned +1.4% on average (13 elections). After a Republican, +3.0% (12). The difference is -1.6% with a permutation p of 0.616. Drop 2000 and 2020, when the winner was not known the next day, and the difference is -3.2%, p 0.312. With a 60-day standard deviation near eight points and a dozen observations a side, no party effect of the size anyone claims could be resolved here even if it existed.
+
+Before the election the only party label anyone can know is the incumbent's. Democrat incumbents saw +3.7% more in the 60 days into the vote than Republican incumbents, p 0.208. Same verdict.
+
+>>> INSERT IMAGE HERE: 02_by_party.png <<<
+
+For completeness, the four-year cycle, mean annual price return by year of the term, Democrats then Republicans: year 1 +12.9% vs +0.7%; year 2 +3.7% vs +3.6%; year 3 +15.4% vs +12.2%; year 4 +10.8% vs +2.2%. Thirteen and twelve observations per cell. Year 1 under Republicans contains 1929, 1973, 2001 and 2008 by accident of the calendar. This is here because someone will ask, not because it can bear a test.
+
+Midterms: the one that comes closest
+
+This is the Goldman chart, extended back to 1930 and given a placebo band. Ninety trading days after 24 midterm elections the index returned +7.6% on average. Twenty-four random 90-day windows return +2.9%. Placebo p 0.039: suggestive, and a fail against the 0.0083 gate. On Goldman's own window, 1974 onward, the mean is +8.5% on 13 elections, p 0.068.
+
+So the post-midterm rally is the one claim on this page that is not simply the drift. It is also a claim that has been published in every election year since at least the 1990s, which is the condition under which effects of this size tend to disappear. I treat p 0.04 on 24 events as a reason to keep the row open in a forward record. The next observation is 3 November 2026.
+
+>>> INSERT IMAGE HERE: 03_midterm.png <<<
+
+The calendar: September, and only September
+
+Twelve months, twelve tests, so the bar inside this family is p < 0.0042, and a month also has to show the same sign in 1928–1976 and in 1977–2026. September's mean price return is -1.11% against +0.82% for the other eleven, t -3.24, p 0.001, and the gap is -2.1 points in the first half and -1.8 in the second. It passes. It is the only month that clears even the unadjusted 5% line. January, the most famous calendar effect, is +0.61 points above the rest with p 0.224. In a large-cap price index there is no January effect to find.
+
+I had written down that September would fail. It did not, and that is recorded. What a pass means is narrower than it sounds: one month, a price index, no costs, an effect of about two points that is known to every reader of the financial press.
+
+So I took it out of sample, four more times, each pre-registered with a one-sided gate of p < 0.025 and the same sign required in both halves of the sample. MSCI World since 1972: -1.8 points, t -2.72, p 0.004, passes (the S&P 500 on the same window: -1.8, p 0.003); the FTSE 100 since 1984: -1.5 points, t -1.85, p 0.035, fails (the S&P 500 on the same window: -1.9, p 0.007); the Nikkei 225 since 1965: -1.1 points, t -1.61, p 0.056, fails (the S&P 500 on the same window: -1.5, p 0.008); the STOXX 600, which Yahoo only carries from 2004: -0.7 points, t -0.81, p 0.213, fails (the S&P 500 on the same window: -1.3, p 0.104). The MSCI World pass is the S&P 500 again, since two-thirds of that index is American and the two rows on the same window agree to a hundredth of a point. The three indices with no American stocks all have a negative September, in 5 of their six half-samples, at roughly two-thirds of the American size, and none of them clears the gate on its own. Pooling them would be a test chosen after seeing the data, so it was not run. The record reads: September is a robust feature of the US index; abroad it has the same sign, a smaller size, and no single market can confirm it.
+
+>>> INSERT IMAGE HERE: 04_months.png <<<
+
+Sell in May: true until it was published
+
+Bouman and Jacobsen put the Halloween indicator in the American Economic Review in December 2002. The honest test is what happened afterwards. From 2003 to 2025 the November–April half returned +5.9% and May–October +4.3%: a gap of +1.6% a year with t 0.62 on 23 non-overlapping years, p 0.540. Winter beat summer in 52% of those years, which is a coin.
+
+The full 1928–2025 sample gives a gap of +2.7%, t 1.84. Start in 1950 and it is +4.9%, t 3.25, which is the number that gets quoted. Every one of those samples was available to the authors, and the strongest of them starts in the one year that happens to make it strongest.
+
+>>> INSERT IMAGE HERE: 05_sell_in_may.png <<<
+
+Earnings surprises: the announcement is real, the drift is not
+
+Post-earnings-announcement drift has the longest paper trail of any event effect: after a good earnings surprise the stock keeps rising for weeks, after a bad one it keeps falling. Two data sets, two pre-registered trials, the P3-11 and P3-12 of the ledger.
+
+The first used Sharadar's point-in-time S&P 500 from 2013, 26,409 filings by members on the day. Sharadar dates the 10-Q filing, a median 36 days after the quarter ends and weeks after the press release, so this could only ever be a post-filing test. The surprise is the seasonal random walk: this quarter's EPS minus the same quarter a year earlier, scaled by the firm's own history, in deciles by quarter. A calendar-time book long the top decile and short the bottom from day +2 to +60 earned +0.6% a year with a Newey–West t of 0.41. Market-adjusted, the top decile beat the bottom by +2.4 points in the month before the filing (t 9.1, the press release is in there) and by +0.4 points in the three months after it (t 1.1). Fail, as predicted.
+
+The second used ART, my own 1997–2012 database: 136,822 quarterly announcements dated by IBES on the day they were made, every stock a member of the developed-market universe on that day, Europe, America and Asia. This is the sample the literature's drift lived on, and it is the one trial in the project where I wrote down a pass as the expected outcome, at about sixty percent.
+
+The announcement is unmistakable: the top surprise decile beats the bottom by +2.9 points on the two announcement days, t 29, and by +4.2 points in the month before, which is analysts and leakage. The drift after it is +0.5 points over the next three months, t 1.8. The calendar-time long-short book earns +2.7% a year, t 1.42, one-sided p 0.077 against a gate of 0.025. Every decile drifts down against the equal-weight market, between -1.3 and -2.0 points, so a long-only book of good surprises loses +7.9% a year (t -3.1) and only the spread is positive. Asia on its own shows +2.3 points with t 3.4; that is recorded as seen and not tested, because a region picked after the data is a new trial. Fail. My sixty percent was wrong.
+
+>>> INSERT IMAGE HERE: 07_pead_art.png <<<
+
+Two harness bugs surfaced on the way and are worth more than the verdict. On Sharadar, the textbook market model fits an intercept on the prior year; on firms sorted by earnings changes that intercept runs from minus ten to plus ten percent a year across the deciles, and sixty days of it manufactures a four-point reversal that is not in the returns. On ART, the price panel spans three regional calendars, so a US stock is missing on Tokyo-only days; a naive return calculation then also loses the day after every gap, and a strict cumulative-return rule wiped out almost every American drift window. Both were fixed before the corrected numbers were seen, both are guarded by tests that manufacture the bug on synthetic data, and in both cases the corrected verdict was the same as the flawed one. That last part is luck, not design.
+
+The ledger
+
+>>> INSERT IMAGE HERE: 06_ledger.png <<<
+
+Six more followed the same day: September out of sample on four indices, and the two earnings-drift studies.
+
+>>> INSERT IMAGE HERE: 08_ledger_2.png <<<
+
+Ten of twelve predictions right. The two misses are the two surprises, and they point in opposite directions: September on the S&P 500, which I expected to fail and which passed, and earnings drift on my own database, which I expected to pass and which failed. That is the usual shape: the pre-registered guess is "nothing", and when it is wrong it is wrong on the interesting one. Two passes in twelve, one of them the same fact measured twice, on effects that have each been in print for decades, is about what a prior of a few percent predicts.
+
+Method, in enough detail to repeat it
+
+Data: S&P 500 daily close, 1927-12-30 to 2026-09-11, 24,791 days. Price index, no dividends, no costs. Monthly returns are month-end to month-end.
+
+Dating: election day is the first Tuesday after the first Monday of November, computed and tested. Results arrive after the close, so post-election windows start the next day.
+
+Placebo: for N events and a window, draw N window positions at random from the whole history, take the mean, repeat 10,000 times. The p-value is the share of draws at least as far from the placebo mean as the observed mean, two-sided. Party differences use 10,000 label permutations.
+
+Calendar: Welch t of each month against the other eleven, Bonferroni 12 inside the family plus the same sign in both halves. Sell in May: per year, May–October compounded and November–April compounded, paired t on the non-overlapping annual differences.
+
+Guards: the placebo test was run on synthetic random walks before it saw real data. On a driftless walk, random events reject at the nominal rate. On a walk with strong drift and no event effect it must not reject. An injected +4% after 25 events is recovered at p < 0.01.
+
+What was not done: no second window after seeing the data, no other index, no total-return series, no costs, because nothing here is a strategy.
+
+Code, pre-registrations, ledger and the numbers behind every chart are public at github.com/Hgjerning/so-you-think-you-can-tell, and the article with its interactive charts is at hgjerning.github.io/so-you-think-you-can-tell. The title is after a song by Pink Floyd; the question it asks is the same one.

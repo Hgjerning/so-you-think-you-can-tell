@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Index-level event studies with placebo inference.
 
-Written 2026-09-13 for Project3 Event Studies. The events here are few (25 US presidential
+Written 2026-09-13 for Project3 Event Driven Strategies. The events here are few (25 US presidential
 elections, 24 midterms, one Sell-in-May observation per year), so the usual cross-sectional
 t-statistics of firm-level event studies have nothing to stand on. Every test in this module
 is therefore judged against a PLACEBO distribution: the same statistic computed on the same
