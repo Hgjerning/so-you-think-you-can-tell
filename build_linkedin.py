@@ -49,6 +49,15 @@ def pv(p):
     return f"{p:.3f}" if p >= 0.001 else f"{p:.4f}"
 
 
+_WORDS = ("zero one two three four five six seven eight nine ten eleven twelve thirteen "
+          "fourteen fifteen sixteen seventeen eighteen nineteen twenty").split()
+
+
+def num_word(n):
+    """Small counts as words, to match the prose around them."""
+    return _WORDS[n] if 0 <= n < len(_WORDS) else str(n)
+
+
 def foot(fig, text, color=INK3, fontsize=9):
     """Footer caption wrapped to the figure width (about 150 characters at 9pt on a 10-12in figure)."""
     import textwrap
@@ -431,11 +440,16 @@ with open(os.path.join(OUT, "article_linkedin_paste.txt"), "w", encoding="utf-8"
 with open(os.path.join(OUT, "paste.html"), "w", encoding="utf-8") as fh:
     fh.write(paste_html(text))
 
+# counts derived from the ledgers, same as build_article.py, so the post cannot contradict
+# the tables it links to (P3-5 is the first ledger's one pass)
+N_TRIALS = len([r for r in summary.to_dict('records') if 'report' not in r['trial']]) + len(LEDGER2) + len(LEDGER3)
+N_PASS = 1 + sum(r['verdict'] == 'PASS' for r in LEDGER2 + LEDGER3)
+
 post = f"""Every autumn a chart goes round showing what stocks do around a US election. I redrew it with the one band that matters: what the S&P 500 does around nothing in particular.
 
 Fifteen hypotheses now, each pre-registered and committed before a single number was computed. Presidential elections, Democrat vs Republican, the run-up, midterms, every calendar month, Sell in May after it was published, earnings drift on two databases, and the day before a public holiday.
 
-Five fail. Post-midterm comes closest ({pct(S['P3-4']['statistic'])} in 90 days, p {pv(S['P3-4']['p'])}, not enough). Sell in May has returned t {g['note'].split('t ')[1].split(';')[0]} since the paper came out. One passes, and it was the one I predicted would fail: September.
+{num_word(N_TRIALS - N_PASS).capitalize()} fail and {num_word(N_PASS)} pass. Post-midterm comes closest of the failures ({pct(S['P3-4']['statistic'])} in 90 days, p {pv(S['P3-4']['p'])}, not enough). Sell in May has returned t {g['note'].split('t ')[1].split(';')[0]} since the paper came out. September passes, and it was one I had predicted would fail.
 
 The newest one is the one I got most wrong. I said a second index was not worth a trial; the pre-holiday effect then passed on the FTSE, the only pass in its family. Taking Easter out of it — a holiday Britain shares with America — it fails again. So the honest version of a result that passed its gate is "an Easter effect with company", and that sentence only exists because the test that could kill it was written down first.
 
