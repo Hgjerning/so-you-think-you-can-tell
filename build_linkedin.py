@@ -225,6 +225,7 @@ ax.set_title("Trials 7–12: September out of sample, and the two earnings-drift
 fig.tight_layout(); fig.savefig(os.path.join(OUT, "08_ledger_2.png")); plt.close(fig)
 
 # ---------------------------------------------------------------- 09 pre-holiday, mean by holiday
+import preholiday_text  # noqa: E402
 from preholiday_text import PREHOLIDAY_PARAGRAPHS, PREHOLIDAY_CHART, LEDGER3  # noqa: E402
 
 # Paragraph 7 (index 6) -- the missing Juneteenths and the legibility criterion that counted the
@@ -445,13 +446,23 @@ with open(os.path.join(OUT, "paste.html"), "w", encoding="utf-8") as fh:
 N_TRIALS = len([r for r in summary.to_dict('records') if 'report' not in r['trial']]) + len(LEDGER2) + len(LEDGER3)
 N_PASS = 1 + sum(r['verdict'] == 'PASS' for r in LEDGER2 + LEDGER3)
 
-post = f"""Every autumn a chart goes round showing what stocks do around a US election. I redrew it with the one band that matters: what the S&P 500 does around nothing in particular.
+# The first ~210 characters are all LinkedIn shows before "…see more", so the reversal has to
+# land there rather than four paragraphs down.
+_phs, _phb = preholiday_text.load()
+PH_US = _phs["us"].loc["all holidays in the set"]
+PH_UK = _phs["uk"].loc["all holidays in the set"]
+PH_LEG = _phs["us"].loc["legibility"]
+PH_DECAY = 1 - PH_US["diff"] / PH_LEG["diff"]
 
-Fifteen hypotheses now, each pre-registered and committed before a single number was computed. Presidential elections, Democrat vs Republican, the run-up, midterms, every calendar month, Sell in May after it was published, earnings drift on two databases, and the day before a public holiday.
+post = f"""I argued a trial was not worth running. It ran, and it passed — the only pass in its family. Then the test I had written down beforehand to kill it did exactly that.
 
-{num_word(N_TRIALS - N_PASS).capitalize()} fail and {num_word(N_PASS)} pass. Post-midterm comes closest of the failures ({pct(S['P3-4']['statistic'])} in 90 days, p {pv(S['P3-4']['p'])}, not enough). Sell in May has returned t {g['note'].split('t ')[1].split(';')[0]} since the paper came out. September passes, and it was one I had predicted would fail.
+The claim is an old one: the day before a public holiday is supposed to be the best day of the year to hold stocks. Ariel measured it on American data from 1963 to 1982, and the literature has since put its post-publication decay at 77%. On the S&P 500 from 1983 it is gone — decayed by {100 * PH_DECAY:.0f}%, which is the published estimate, confirmed rather than discovered.
 
-The newest one is the one I got most wrong. I said a second index was not worth a trial; the pre-holiday effect then passed on the FTSE, the only pass in its family. Taking Easter out of it — a holiday Britain shares with America — it fails again. So the honest version of a result that passed its gate is "an Easter effect with company", and that sentence only exists because the test that could kill it was written down first.
+So I said a second index would only repeat the result. That was wrong, and for a reason worth naming: I never checked that five of the eight British bank holidays have no American counterpart. On the FTSE 100 the effect is alive — {100 * PH_UK['diff']:+.2f} points a day, t {PH_UK['t']:.2f} — and it clears the gate.
+
+Then take out Easter, the one holiday Britain shares with America, and it fails. So the honest version of a result that passed is "an Easter effect with company", and that sentence exists only because the test that could kill it was written down first.
+
+{num_word(N_TRIALS).capitalize()} pre-registered trials now: elections, the calendar, Sell in May after publication, earnings drift on two databases, and this. {num_word(N_TRIALS - N_PASS).capitalize()} fail and {num_word(N_PASS)} pass — and one of the {num_word(N_PASS)} does not survive being taken apart.
 
 The method is cheap: compare the event window with ten thousand random windows of the same length. The market rose after most things.
 
