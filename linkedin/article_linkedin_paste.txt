@@ -12,11 +12,15 @@ Twenty-five elections, 1928 to 2024. The sixty trading days after election day r
 
 The sixty days before the election, the "sideways into the vote" story, returned +1.2% against a placebo mean of +2.0%, p 0.689. Slightly below the drift, well inside the noise.
 
+>>> INSERT IMAGE HERE: 01_presidential.png <<<
+
 Democrat or Republican: twenty-five coin flips
 
 After a Democrat won, the next sixty days returned +1.4% on average (13 elections). After a Republican, +3.0% (12). The difference is -1.6% with a permutation p of 0.616. Drop 2000 and 2020, when the winner was not known the next day, and the difference is -3.2%, p 0.312. With a 60-day standard deviation near eight points and a dozen observations a side, no party effect of the size anyone claims could be resolved here even if it existed.
 
 Before the election the only party label anyone can know is the incumbent's. Democrat incumbents saw +3.7% more in the 60 days into the vote than Republican incumbents, p 0.208. Same verdict.
+
+>>> INSERT IMAGE HERE: 02_by_party.png <<<
 
 For completeness, the four-year cycle, mean annual price return by year of the term, Democrats then Republicans: year 1 +12.9% vs +0.7%; year 2 +3.7% vs +3.6%; year 3 +15.4% vs +12.2%; year 4 +10.8% vs +2.2%. Thirteen and twelve observations per cell. Year 1 under Republicans contains 1929, 1973, 2001 and 2008 by accident of the calendar. This is here because someone will ask, not because it can bear a test.
 
@@ -26,6 +30,8 @@ This is the Goldman chart, extended back to 1930 and given a placebo band. Ninet
 
 So the post-midterm rally is the one claim on this page that is not simply the drift. It is also a claim that has been published in every election year since at least the 1990s, which is the condition under which effects of this size tend to disappear. I treat p 0.04 on 24 events as a reason to keep the row open in a forward record. The next observation is 3 November 2026.
 
+>>> INSERT IMAGE HERE: 03_midterm.png <<<
+
 The calendar: September, and only September
 
 Twelve months, twelve tests, so the bar inside this family is p < 0.0042, and a month also has to show the same sign in 1928–1976 and in 1977–2026. September's mean price return is -1.11% against +0.82% for the other eleven, t -3.24, p 0.001, and the gap is -2.1 points in the first half and -1.8 in the second. It passes. It is the only month that clears even the unadjusted 5% line. January, the most famous calendar effect, is +0.61 points above the rest with p 0.224. In a large-cap price index there is no January effect to find.
@@ -34,11 +40,15 @@ I had written down that September would fail. It did not, and that is recorded. 
 
 So I took it out of sample, four more times, each pre-registered with a one-sided gate of p < 0.025 and the same sign required in both halves of the sample. MSCI World since 1972: -1.8 points, t -2.72, p 0.004, passes (the S&P 500 on the same window: -1.8, p 0.003); the FTSE 100 since 1984: -1.5 points, t -1.85, p 0.035, fails (the S&P 500 on the same window: -1.9, p 0.007); the Nikkei 225 since 1965: -1.1 points, t -1.61, p 0.056, fails (the S&P 500 on the same window: -1.5, p 0.008); the STOXX 600, which Yahoo only carries from 2004: -0.7 points, t -0.81, p 0.213, fails (the S&P 500 on the same window: -1.3, p 0.104). The MSCI World pass is the S&P 500 again, since two-thirds of that index is American and the two rows on the same window agree to a hundredth of a point. The three indices with no American stocks all have a negative September, in 5 of their six half-samples, at roughly two-thirds of the American size, and none of them clears the gate on its own. Pooling them would be a test chosen after seeing the data, so it was not run. The record reads: September is a robust feature of the US index; abroad it has the same sign, a smaller size, and no single market can confirm it.
 
+>>> INSERT IMAGE HERE: 04_months.png <<<
+
 Sell in May: true until it was published
 
 Bouman and Jacobsen put the Halloween indicator in the American Economic Review in December 2002. The honest test is what happened afterwards. From 2003 to 2025 the November–April half returned +5.9% and May–October +4.3%: a gap of +1.6% a year with t 0.62 on 23 non-overlapping years, p 0.540. Winter beat summer in 52% of those years, which is a coin.
 
 The full 1928–2025 sample gives a gap of +2.7%, t 1.84. Start in 1950 and it is +4.9%, t 3.25, which is the number that gets quoted. Every one of those samples was available to the authors, and the strongest of them starts in the one year that happens to make it strongest.
+
+>>> INSERT IMAGE HERE: 05_sell_in_may.png <<<
 
 Earnings surprises: the announcement is real, the drift is not
 
@@ -49,6 +59,8 @@ The first used Sharadar's point-in-time S&P 500 from 2013, 26,409 filings by mem
 The second used ART, my own 1997–2012 database: 136,822 quarterly announcements dated by IBES on the day they were made, every stock a member of the developed-market universe on that day, Europe, America and Asia. This is the sample the literature's drift lived on, and it is the one trial in the project where I wrote down a pass as the expected outcome, at about sixty percent.
 
 The announcement is unmistakable: the top surprise decile beats the bottom by +2.9 points on the two announcement days, t 29, and by +4.2 points in the month before, which is analysts and leakage. The drift after it is +0.5 points over the next three months, t 1.8. The calendar-time long-short book earns +2.7% a year, t 1.42, one-sided p 0.077 against a gate of 0.025. Every decile drifts down against the equal-weight market, between -1.3 and -2.0 points, so a long-only book of good surprises loses +7.9% a year (t -3.1) and only the spread is positive. Asia on its own shows +2.3 points with t 3.4; that is recorded as seen and not tested, because a region picked after the data is a new trial. Fail. My sixty percent was wrong.
+
+>>> INSERT IMAGE HERE: 07_pead_art.png <<<
 
 Two harness bugs surfaced on the way and are worth more than the verdict. On Sharadar, the textbook market model fits an intercept on the prior year; on firms sorted by earnings changes that intercept runs from minus ten to plus ten percent a year across the deciles, and sixty days of it manufactures a four-point reversal that is not in the returns. On ART, the price panel spans three regional calendars, so a US stock is missing on Tokyo-only days; a naive return calculation then also loses the day after every gap, and a strict cumulative-return rule wiped out almost every American drift window. Both were fixed before the corrected numbers were seen, both are guarded by tests that manufacture the bug on synthetic data, and in both cases the corrected verdict was the same as the flawed one. That last part is luck, not design.
 
@@ -64,6 +76,8 @@ So far, so tidy. Then the same test on the FTSE 100, which I argued was not wort
 
 A pass is where a project like this earns its gates, because the next question is whether it survives being taken apart. The strongest British day is the Easter session — one trading day that precedes both Good Friday and Easter Monday, since the Friday, Saturday and Sunday are all shut — +0.35% a day — and Good Friday is also the strongest American one at +0.38%. If the UK result is really an Easter result, it is not independent evidence of anything; it is the same spring weekend seen from a second exchange. P3-15 removed it. The remaining 209 sessions give +0.112 points, and here the two ways of computing significance part company: the textbook two-sample t says p 0.018 and the placebo says p 0.071. The specification demanded both, fixed before the run precisely because they were going to disagree. Fail. The British pre-holiday effect is an Easter effect with company.
 
+>>> INSERT IMAGE HERE: 09_preholiday.png <<<
+
 The disagreement is not a glitch and it is the most portable thing here. Pre-holiday sessions are calm: the market moves about thirty percent less on them than on an ordinary day. A two-sample t divides by the event group's own quiet variance and reads strong; the placebo asks how unusual the number is against randomly chosen days drawn from the market as it actually is, and reads weaker. Neither is wrong. But on a subset selected for being quiet, the t-statistic flatters, and the honest default is the one that compares against the whole distribution. Had the gate been written with one leg and chosen afterwards, P3-15 would have been a pass.
 
 Two smaller things the procedure caught, both in my own specification rather than in the market. Printing every excluded closure surfaced five Juneteenths: an NYSE holiday since 2022 that I had not listed among the nine, sitting in the discard pile where it did not belong. It stays there, recorded, because amending a list after seeing the result is how a specification stops meaning anything, and five days out of 378 could not move the verdict. And a legibility check on the UK run failed for the dullest possible reason: I had specified a count of holidays per year and the quantity produced was sessions per year. They differ because the Thursday before Good Friday is also the session before Easter Monday, and Christmas Eve precedes Boxing Day — the calendar pairs up its own holidays. The same slip sat in the power calculation, so the trial that passed cleared a higher bar than the one I had written down.
@@ -72,9 +86,15 @@ The family closes there. Dead in America at a decay the literature had already m
 
 The ledger
 
+>>> INSERT IMAGE HERE: 06_ledger.png <<<
+
 Six more followed the same day: September out of sample on four indices, and the two earnings-drift studies.
 
+>>> INSERT IMAGE HERE: 08_ledger_2.png <<<
+
 And three on the pre-holiday effect, six days later.
+
+>>> INSERT IMAGE HERE: 10_ledger_3.png <<<
 
 Twelve of fifteen predictions right. The three misses are the three surprises, and they do not point the same way: September on the S&P 500, which I expected to fail and which passed; earnings drift on my own database, which I expected to pass and which failed; and the pre-holiday effect on the FTSE, which I argued was not even worth a trial and which is the only thing here that passed and then partly survived. That is the usual shape: the pre-registered guess is "nothing", and when it is wrong it is wrong on the one worth knowing about. Three passes in fifteen — one of them the same fact measured twice, one of them an Easter effect once you take it apart — on claims that have each been in print for decades, is about what a prior of a few percent predicts.
 

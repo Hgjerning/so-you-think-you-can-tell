@@ -389,7 +389,11 @@ def paste_txt(t):
         if b.startswith("[Cover image:") or b.startswith("So You Think You Can Tell"):
             continue                                   # LinkedIn takes the title and cover separately
         if b.startswith("[Image:"):
-            continue                                   # images are attached in the editor
+            # keep the position, as the hand-made 2026-09-13 file did: LinkedIn's editor takes
+            # images one at a time and without these markers nobody knows where they go
+            f = b.split(":", 1)[1].strip().rstrip("]").strip()
+            out.append(f">>> INSERT IMAGE HERE: {f} <<<")
+            continue
         out.append(b[2:-2] if b.startswith("**") and b.endswith("**") else b)
     return "\n\n".join(out) + "\n"
 
