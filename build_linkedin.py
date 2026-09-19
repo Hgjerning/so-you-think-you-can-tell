@@ -214,6 +214,56 @@ for (i, j), c in tbl.get_celld().items():
     if i > 0 and j == 5 and cells2[i - 1][5] == "PASS": c.set_text_props(color="#0ca30c", fontweight="bold")
 ax.set_title("Trials 7–12: September out of sample, and the two earnings-drift studies. One-sided gate 0.025.", loc="left", color=INK, fontsize=12, fontweight="bold")
 fig.tight_layout(); fig.savefig(os.path.join(OUT, "08_ledger_2.png")); plt.close(fig)
+
+# ---------------------------------------------------------------- 09 pre-holiday, mean by holiday
+from preholiday_text import PREHOLIDAY_PARAGRAPHS, PREHOLIDAY_CHART, LEDGER3  # noqa: E402
+
+ph = PREHOLIDAY_CHART
+fig, ax = plt.subplots(figsize=(13, 6.4))
+ypos, labels, colors, prev = [], [], [], None
+y = 0.0
+for r in ph:
+    if prev is not None and r["market"] != prev:
+        y += 0.8                      # a gap between the two markets
+    prev = r["market"]
+    ypos.append(y); labels.append(r["holiday"])
+    colors.append(SEPT if r["market"] == "FTSE 100" else EVENT)
+    y += 1.0
+vals = [r["mean"] for r in ph]
+ax.barh(ypos, vals, color=colors, height=0.72)
+for yy, r in zip(ypos, ph):
+    # the count next to every bar: an n of 5 must not read like an n of 44
+    ax.text(r["mean"] + (0.006 if r["mean"] >= 0 else -0.006), yy, f"n {r['n']}",
+            va="center", ha="left" if r["mean"] >= 0 else "right", color=INK3, fontsize=8.5)
+ax.set_yticks(ypos); ax.set_yticklabels(labels, fontsize=9)
+ax.invert_yaxis(); ax.axvline(0, color=RULE, lw=1.0)
+ax.set_xlabel("mean simple return on the session before the holiday, %", color=INK2, fontsize=9)
+ax.set_title("The day before a holiday: S&P 500 1983–2026 (blue) and FTSE 100 1984–2026 (orange)",
+             loc="left", color=INK, fontsize=12, fontweight="bold")
+for s in ("top", "right", "left"):
+    ax.spines[s].set_visible(False)
+ax.tick_params(colors=INK3, length=0)
+foot(fig, "One session can precede two holidays: the Thursday before Good Friday is also the session before "
+          "Easter Monday, and Christmas Eve precedes Boxing Day, so those carry both names. The British Christmas "
+          "Day row is the handful of years the substitution rules separate it from Boxing Day and is too small to "
+          "read anything into.")
+fig.tight_layout(rect=(0, 0.07, 1, 1)); fig.savefig(os.path.join(OUT, "09_preholiday.png")); plt.close(fig)
+
+# ---------------------------------------------------------------- 10 ledger, trials 13-15
+# All three rows in ONE image on purpose. P3-14 is the project's only pass and P3-15 takes it
+# apart; a screenshot of the pass on its own would travel without its own refutation.
+fig, ax = plt.subplots(figsize=(14, 2.4)); ax.axis("off")
+cells3 = [[r["trial"], r["hypothesis"], f"{r['n']:,}", r["observed"], r["p"], r["verdict"], r["call"]] for r in LEDGER3]
+tbl = ax.table(cellText=cells3, colLabels=["trial", "hypothesis", "n", "observed", "p", "gate", "my call"], loc="center", cellLoc="left", colLoc="left",
+               colWidths=[0.06, 0.44, 0.06, 0.24, 0.06, 0.07, 0.07])
+tbl.auto_set_font_size(False); tbl.set_fontsize(10); tbl.scale(1, 1.6)
+for (i, j), c in tbl.get_celld().items():
+    c.set_edgecolor(RULE); c.set_linewidth(0.6)
+    if i == 0: c.set_text_props(color=INK2, fontweight="bold"); c.set_facecolor("#f3f4f7")
+    if i > 0 and j == 5 and cells3[i - 1][5] == "PASS": c.set_text_props(color="#0ca30c", fontweight="bold")
+ax.set_title("Trials 13–15: the pre-holiday effect. P3-14 is the one pass in this family — and P3-15 removes "
+             "Easter from it, where it does not survive.", loc="left", color=INK, fontsize=12, fontweight="bold")
+fig.tight_layout(); fig.savefig(os.path.join(OUT, "10_ledger_3.png")); plt.close(fig)
 d_mean = float(S["P3-2"]["note"].split("D mean ")[1].split(" ")[0]); r_mean = float(S["P3-2"]["note"].split("R mean ")[1].split(" ")[0])
 p2x = S["P3-2 (report)"]; p3i = S["P3-3 (report)"]; mid74 = S["P3-4 (report)"]
 gw = float(g["note"].split("winter mean ")[1].split(",")[0]); gs = float(g["note"].split("summer mean ")[1].split(",")[0])
@@ -282,6 +332,14 @@ The full 1928–2025 sample gives a gap of {pct(f['statistic'])}, t {f['note'].s
 
 {PEAD_PARAGRAPHS[4]}
 
+**The day before a holiday: dead in America, Easter in Britain**
+
+{(chr(10) * 2).join(PREHOLIDAY_PARAGRAPHS[:5])}
+
+[Image: 09_preholiday.png]
+
+{(chr(10) * 2).join(PREHOLIDAY_PARAGRAPHS[5:])}
+
 **The ledger**
 
 [Image: 06_ledger.png]
@@ -290,7 +348,11 @@ Six more followed the same day: September out of sample on four indices, and the
 
 [Image: 08_ledger_2.png]
 
-Ten of twelve predictions right. The two misses are the two surprises, and they point in opposite directions: September on the S&P 500, which I expected to fail and which passed, and earnings drift on my own database, which I expected to pass and which failed. That is the usual shape: the pre-registered guess is "nothing", and when it is wrong it is wrong on the interesting one. Two passes in twelve, one of them the same fact measured twice, on effects that have each been in print for decades, is about what a prior of a few percent predicts.
+And three on the pre-holiday effect, six days later.
+
+[Image: 10_ledger_3.png]
+
+Twelve of fifteen predictions right. The three misses are the three surprises, and they do not point the same way: September on the S&P 500, which I expected to fail and which passed; earnings drift on my own database, which I expected to pass and which failed; and the pre-holiday effect on the FTSE, which I argued was not even worth a trial and which is the only thing here that passed and then partly survived. That is the usual shape: the pre-registered guess is "nothing", and when it is wrong it is wrong on the one worth knowing about. Three passes in fifteen — one of them the same fact measured twice, one of them an Easter effect once you take it apart — on claims that have each been in print for decades, is about what a prior of a few percent predicts.
 
 **Method, in enough detail to repeat it**
 
@@ -311,11 +373,60 @@ Code, pre-registrations, ledger and the numbers behind every chart are public at
 with open(os.path.join(OUT, "article_linkedin.txt"), "w", encoding="utf-8") as fh:
     fh.write(text)
 
+# ---------------------------------------------------------------- paste-ready article (txt + html)
+# These two were hand-made on 2026-09-13 and were still the twelve-trial version six days later,
+# because nothing regenerated them. Derived from `text` from now on, so the package cannot drift.
+PAGES = "https://hgjerning.github.io/so-you-think-you-can-tell"
+
+
+def _blocks(t):
+    return [b.strip() for b in t.strip().split("\n\n") if b.strip()]
+
+
+def paste_txt(t):
+    out = []
+    for b in _blocks(t):
+        if b.startswith("[Cover image:") or b.startswith("So You Think You Can Tell"):
+            continue                                   # LinkedIn takes the title and cover separately
+        if b.startswith("[Image:"):
+            continue                                   # images are attached in the editor
+        out.append(b[2:-2] if b.startswith("**") and b.endswith("**") else b)
+    return "\n\n".join(out) + "\n"
+
+
+def paste_html(t):
+    from html import escape
+    out = ['<!doctype html><html><head><meta charset="utf-8"><title>So You Think You Can Tell '
+           '(paste version)</title><style>body{font-family:Georgia,serif;max-width:720px;'
+           'margin:2rem auto;line-height:1.5}h2{font-family:sans-serif;margin-top:2rem}'
+           'img{max-width:100%}</style></head><body>']
+    for b in _blocks(t):
+        if b.startswith("[Cover image:") or b.startswith("So You Think You Can Tell"):
+            continue
+        if b.startswith("[Image:"):
+            f = b.split(":", 1)[1].strip().rstrip("]").strip()
+            alt = f.split("_", 1)[-1].rsplit(".", 1)[0].replace("_", " ")
+            out.append(f'<p><img src="{PAGES}/linkedin/{f}" alt="{alt}" style="max-width:100%"></p>')
+        elif b.startswith("**") and b.endswith("**"):
+            out.append(f"<h2>{escape(b[2:-2])}</h2>")
+        else:
+            out.append(f"<p>{escape(b)}</p>")
+    out.append("</body></html>")
+    return "\n".join(out) + "\n"
+
+
+with open(os.path.join(OUT, "article_linkedin_paste.txt"), "w", encoding="utf-8") as fh:
+    fh.write(paste_txt(text))
+with open(os.path.join(OUT, "paste.html"), "w", encoding="utf-8") as fh:
+    fh.write(paste_html(text))
+
 post = f"""Every autumn a chart goes round showing what stocks do around a US election. I redrew it with the one band that matters: what the S&P 500 does around nothing in particular.
 
-Six hypotheses, pre-registered and committed before a single number was computed. Presidential elections, Democrat vs Republican, the run-up, midterms, every calendar month, and Sell in May after it was published.
+Fifteen hypotheses now, each pre-registered and committed before a single number was computed. Presidential elections, Democrat vs Republican, the run-up, midterms, every calendar month, Sell in May after it was published, earnings drift on two databases, and the day before a public holiday.
 
 Five fail. Post-midterm comes closest ({pct(S['P3-4']['statistic'])} in 90 days, p {pv(S['P3-4']['p'])}, not enough). Sell in May has returned t {g['note'].split('t ')[1].split(';')[0]} since the paper came out. One passes, and it was the one I predicted would fail: September.
+
+The newest one is the one I got most wrong. I said a second index was not worth a trial; the pre-holiday effect then passed on the FTSE, the only pass in its family. Taking Easter out of it — a holiday Britain shares with America — it fails again. So the honest version of a result that passed its gate is "an Easter effect with company", and that sentence only exists because the test that could kill it was written down first.
 
 The method is cheap: compare the event window with ten thousand random windows of the same length. The market rose after most things.
 
