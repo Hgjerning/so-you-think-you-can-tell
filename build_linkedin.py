@@ -218,6 +218,13 @@ fig.tight_layout(); fig.savefig(os.path.join(OUT, "08_ledger_2.png")); plt.close
 # ---------------------------------------------------------------- 09 pre-holiday, mean by holiday
 from preholiday_text import PREHOLIDAY_PARAGRAPHS, PREHOLIDAY_CHART, LEDGER3  # noqa: E402
 
+# Paragraph 7 (index 6) -- the missing Juneteenths and the legibility criterion that counted the
+# wrong quantity -- is cut from the LINKEDIN version only. Both are lessons about my own
+# specification rather than about the market, and the result reads whole without them. The web
+# article keeps it: there the length costs nothing and the record should carry the faults.
+LINKEDIN_CUT = {6}
+PH = [p for i, p in enumerate(PREHOLIDAY_PARAGRAPHS) if i not in LINKEDIN_CUT]
+
 ph = PREHOLIDAY_CHART
 fig, ax = plt.subplots(figsize=(13, 6.4))
 ypos, labels, colors, prev = [], [], [], None
@@ -334,11 +341,11 @@ The full 1928–2025 sample gives a gap of {pct(f['statistic'])}, t {f['note'].s
 
 **The day before a holiday: dead in America, Easter in Britain**
 
-{(chr(10) * 2).join(PREHOLIDAY_PARAGRAPHS[:5])}
+{(chr(10) * 2).join(PH[:5])}
 
 [Image: 09_preholiday.png]
 
-{(chr(10) * 2).join(PREHOLIDAY_PARAGRAPHS[5:])}
+{(chr(10) * 2).join(PH[5:])}
 
 **The ledger**
 
