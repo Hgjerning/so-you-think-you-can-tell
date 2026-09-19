@@ -83,15 +83,32 @@ def pv(p):
     return f"{p:.3f}" if p >= 0.001 else f"{p:.4f}"
 
 
+_WORDS = ("zero one two three four five six seven eight nine ten eleven twelve thirteen "
+          "fourteen fifteen sixteen seventeen eighteen nineteen twenty").split()
+
+
+def w(n):
+    """Small counts as words, to match the prose around them."""
+    return _WORDS[n] if 0 <= n < len(_WORDS) else str(n)
+
+
 first, last = prices.index[0].date(), prices.index[-1].date()
 from oos_text import OOS_TEXT  # noqa: E402  (same paragraph, same numbers, one source)
 from pead_text import PEAD_PARAGRAPHS, PEAD_CHART, LEDGER2  # noqa: E402
+from preholiday_text import PREHOLIDAY_PARAGRAPHS, PREHOLIDAY_CHART, LEDGER3  # noqa: E402
 data["pead"] = PEAD_CHART
+data["preholiday"] = PREHOLIDAY_CHART
 PEAD_HTML = "\n".join(f"<p>{p}</p>" for p in PEAD_PARAGRAPHS)
+PREHOLIDAY_HTML = "\n".join(f"<p>{p}</p>" for p in PREHOLIDAY_PARAGRAPHS)
+LEDGER3_HTML = "".join(f'<tr><td>{r["trial"]}</td><td>{r["hypothesis"]}</td><td class="num">{r["n"]:,}</td><td class="num">{r["observed"]}</td><td class="num">{r["p"]}</td><td><span class="verdict{" pass" if r["verdict"] == "PASS" else ""}">{r["verdict"]}</span></td><td>{"<strong>wrong</strong>" if r["call"] == "WRONG" else r["call"]}</td></tr>' for r in LEDGER3)
+# counts for the closing paragraph, derived rather than typed (P3-5 is the first ledger's one miss and its one pass)
+N_TRIALS = len([r for r in data["summary"] if "report" not in r["trial"]]) + len(LEDGER2) + len(LEDGER3)
+N_WRONG = 1 + sum(r["call"] == "WRONG" for r in LEDGER2 + LEDGER3)
+N_PASS = 1 + sum(r["verdict"] == "PASS" for r in LEDGER2 + LEDGER3)
 LEDGER2_HTML = "".join(f'<tr><td>{r["trial"]}</td><td>{r["hypothesis"]}</td><td class="num">{r["n"]:,}</td><td class="num">{r["observed"]}</td><td class="num">{r["p"]}</td><td><span class="verdict{" pass" if r["verdict"] == "PASS" else ""}">{r["verdict"]}</span></td><td>{"<strong>wrong</strong>" if r["call"] == "WRONG" else r["call"]}</td></tr>' for r in LEDGER2)
 
 html = f"""<title>So You Think You Can Tell</title>
-<meta name="description" content="Twelve pre-registered tests of US election, calendar and earnings-surprise effects, 1927-2026, judged against placebo windows and a stated gate.">
+<meta name="description" content="Fifteen pre-registered tests of US election, calendar, earnings-surprise and holiday effects, 1927-2026, judged against placebo windows and a stated gate.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300;1,9..144,600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
@@ -151,6 +168,7 @@ hr {{ border:0; border-top:1px solid var(--rule); margin:3rem 0; }}
 ul {{ padding-left:1.2rem; }} li {{ margin-bottom:0.35rem; }}
 a {{ color:var(--event); }}
 @media (prefers-reduced-motion: reduce) {{ * {{ transition:none !important; }} }}
+@media print {{ figure, .note, .tablewrap, .hero, .cover {{ break-inside:avoid; page-break-inside:avoid; }} h2 {{ break-after:avoid; page-break-after:avoid; }} .grid2 {{ grid-template-columns:1fr 1fr; }} .tip {{ display:none !important; }} }}
 </style>
 <div class="wrap">
 <div class="cover" id="cover"></div>
@@ -222,6 +240,14 @@ a {{ color:var(--event); }}
 <div class="chart" id="c_pead"></div>
 <div class="legend"><span class="box" style="--sw:var(--event)">Announcement days 0 to +1</span><span class="box" style="--sw:var(--drift)">Days +2 to +60</span></div></figure>
 
+<h2>The day before a holiday: dead in America, Easter in Britain</h2>
+<div class="prose">
+{PREHOLIDAY_HTML}
+</div>
+<figure><p class="title">Mean return on the session before each holiday</p><p class="sub">Simple daily return, S&amp;P 500 1983–2026 and FTSE 100 1984–2026. One session can precede two holidays: the Thursday before Good Friday is also the session before Easter Monday, and Christmas Eve precedes Boxing Day, so those are labelled with both. The count beside each bar is the number of such sessions; the British Christmas Day row is the handful of years the substitution rules separate it from Boxing Day, and is too small to read anything into.</p>
+<div class="chart" id="c_preh"></div>
+<div class="legend"><span class="box" style="--sw:var(--event)">S&amp;P 500</span><span class="box" style="--sw:var(--sept)">FTSE 100</span></div></figure>
+
 <h2>The ledger</h2>
 <div class="tablewrap"><table>
 <thead><tr><th>Trial</th><th>Hypothesis</th><th class="num">n</th><th class="num">Observed</th><th class="num">Placebo mean</th><th class="num">p</th><th>Gate 0.0083</th><th>My call</th></tr></thead>
@@ -232,8 +258,12 @@ a {{ color:var(--event); }}
 <div class="tablewrap"><table>
 <thead><tr><th>Trial</th><th>Hypothesis</th><th class="num">n</th><th class="num">Observed</th><th class="num">p</th><th>Gate</th><th>My call</th></tr></thead>
 <tbody>{LEDGER2_HTML}</tbody></table></div>
+<p class="sub" style="margin-top:1rem">And three on the pre-holiday effect. P3-15 is the one trial here whose gate required two statistics to agree; the p column is the two-sample t and the placebo figure is in the observed column beside it.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Trial</th><th>Hypothesis</th><th class="num">n</th><th class="num">Observed</th><th class="num">p</th><th>Gate</th><th>My call</th></tr></thead>
+<tbody>{LEDGER3_HTML}</tbody></table></div>
 <div class="prose">
-<p>Ten of twelve predictions right. The two misses are the two surprises, and they point in opposite directions: September on the S&amp;P 500, which I expected to fail and which passed, and earnings drift on my own database, which I expected to pass and which failed. That is the usual shape: the pre-registered guess is "nothing", and when it is wrong it is wrong on the interesting one. Two passes in twelve, one of them the same fact measured twice, on effects that have each been in print for decades, is about what a prior of a few percent predicts.</p>
+<p>{w(N_TRIALS - N_WRONG).capitalize()} of {w(N_TRIALS)} predictions right. The {w(N_WRONG)} misses are the {w(N_WRONG)} surprises, and they do not point the same way: September on the S&amp;P 500, which I expected to fail and which passed, earnings drift on my own database, which I expected to pass and which failed; and the pre-holiday effect on the FTSE, which I argued was not even worth a trial and which is the only thing in this project that passed and then partly survived. That is the usual shape: the pre-registered guess is "nothing", and when it is wrong it is wrong on the one worth knowing about. {w(N_PASS).capitalize()} passes in {w(N_TRIALS)} — one of them the same fact measured twice, one of them an Easter effect once you take it apart — on claims that have each been in print for decades, is about what a prior of a few percent predicts.</p>
 </div>
 
 <hr>
@@ -410,6 +440,43 @@ bandChart('c_mid74', D.mid74, D.band_mid74, {{label:'S&P 500 around midterm elec
     const hit = el('rect', {{x:x(i), y:m.t, width:gw, height:H-m.t-m.b, fill:'transparent'}}, svg);
     hit.addEventListener('mousemove', ev => {{ tip.style.display='block'; tip.innerHTML = `decile ${{r.decile}}<br>days 0–1: ${{(r.car01*100).toFixed(2)}}%<br>days +2–60: ${{(r.car260*100).toFixed(2)}}%`; const bx = box.getBoundingClientRect(); let tx = ev.clientX-bx.left+14; if (tx+200>bx.width) tx-=220; tip.style.left=tx+'px'; tip.style.top=(ev.clientY-bx.top-10)+'px'; }});
     hit.addEventListener('mouseleave', () => tip.style.display='none');
+  }});
+}})();
+
+// ---------- pre-holiday, horizontal bars by holiday
+(function(){{
+  const box = document.getElementById('c_preh'); if (!box) return;
+  const R = D.preholiday; const rh = 20, gap = 7;
+  const m = {{l:200, r:44, t:10, b:26}}; const W = 860, H = m.t + m.b + R.length*rh + 2*gap;
+  const lo = Math.min(0, ...R.map(r=>r.mean)), hi = Math.max(...R.map(r=>r.mean));
+  const pad = (hi-lo)*0.08; const x = v => m.l + (W-m.l-m.r)*(v-lo+pad)/((hi-lo)+2*pad);
+  const svg = el('svg', {{viewBox:`0 0 ${{W}} ${{H}}`, role:'img', 'aria-label':'Mean return on the session before each holiday, S&P 500 and FTSE 100'}}, box);
+  for (let v = Math.ceil(lo*10)/10; v <= hi; v += 0.1) {{
+    el('line', {{x1:x(v), x2:x(v), y1:m.t, y2:H-m.b, stroke:css('--rule'), 'stroke-width':Math.abs(v)<1e-9?1.2:0.6}}, svg);
+    const t = el('text', {{x:x(v), y:H-m.b+16, 'text-anchor':'middle', fill:css('--ink-3'), 'font-size':11, 'font-family':'IBM Plex Mono, monospace'}}, svg);
+    t.textContent = v.toFixed(1)+'%';
+  }}
+  const tip = document.createElement('div'); tip.className='tip'; box.appendChild(tip);
+  let prev = null, yy = m.t + gap;
+  R.forEach(r => {{
+    if (prev !== null && r.market !== prev) yy += gap;
+    prev = r.market;
+    const col = r.market === 'FTSE 100' ? css('--sept') : css('--event');
+    const x0 = x(0), x1 = x(r.mean);
+    el('rect', {{x:Math.min(x0,x1), y:yy+3, width:Math.max(1,Math.abs(x1-x0)), height:rh-6, fill:col, rx:2}}, svg);
+    const lab = el('text', {{x:m.l-8, y:yy+rh-6, 'text-anchor':'end', fill:css('--ink-2'), 'font-size':12, 'font-family':'IBM Plex Sans, sans-serif'}}, svg);
+    lab.textContent = r.holiday.length > 30 ? r.holiday.slice(0,29)+'…' : r.holiday;
+    // the count beside every bar: an n of 5 must not read like an n of 44
+    const nl = el('text', {{x:Math.max(x0,x1)+6, y:yy+rh-6, fill:css('--ink-3'), 'font-size':10.5, 'font-family':'IBM Plex Mono, monospace'}}, svg);
+    nl.textContent = 'n ' + r.n;
+    const hit = el('rect', {{x:m.l, y:yy, width:W-m.l-m.r, height:rh, fill:'transparent'}}, svg);
+    const row = r, ty = yy;
+    hit.addEventListener('mousemove', ev => {{ tip.style.display='block';
+      tip.innerHTML = `${{row.holiday}}<br>${{row.market}}, n ${{row.n}}<br>mean ${{row.mean.toFixed(3)}}%<br>up ${{(row.up*100).toFixed(0)}}% of the time`;
+      const bx = box.getBoundingClientRect(); let tx = ev.clientX-bx.left+14; if (tx+240>bx.width) tx-=260;
+      tip.style.left=tx+'px'; tip.style.top=(ty)+'px'; }});
+    hit.addEventListener('mouseleave', () => tip.style.display='none');
+    yy += rh;
   }});
 }})();
 

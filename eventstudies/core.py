@@ -48,6 +48,170 @@ def us_election_dates(start_year: int, end_year: int, kind: str = "presidential"
     return pd.Series([us_election_day(y) for y in years], index=pd.Index(years, name="year"), name="date")
 
 
+def easter_sunday(year: int) -> pd.Timestamp:
+    """Gregorian Easter (anonymous computus). Good Friday is two days earlier."""
+    a = year % 19
+    b, c = divmod(year, 100)
+    d, e = divmod(b, 4)
+    g = (8 * b + 13) // 25
+    h = (19 * a + b - d - g + 15) % 30
+    i, k = divmod(c, 4)
+    l = (32 + 2 * e + 2 * i - h - k) % 7
+    m = (a + 11 * h + 19 * l) // 433
+    month = (h + l - 7 * m + 90) // 25
+    day = (h + l - 7 * m + 33 * month + 19) % 32
+    return pd.Timestamp(year=year, month=month, day=day)
+
+
+def _nth_weekday(year: int, month: int, weekday: int, n: int) -> pd.Timestamp:
+    """n-th ``weekday`` (Mon=0) of a month; n=-1 means the last one."""
+    first = pd.Timestamp(year=year, month=month, day=1)
+    if n > 0:
+        return first + pd.Timedelta(days=(weekday - first.weekday()) % 7 + 7 * (n - 1))
+    last = first + pd.offsets.MonthEnd(0)
+    return last - pd.Timedelta(days=(last.weekday() - weekday) % 7)
+
+
+def _observance_candidates(d: pd.Timestamp) -> list:
+    """A fixed-date holiday and the weekend-observance days it may be moved to.
+
+    Both directions are offered on purpose. The NYSE moves a Saturday holiday to the
+    preceding Friday and a Sunday holiday to the following Monday, but the rule has
+    exceptions (New Year's Day falling on a Saturday is not observed at all) and it has
+    changed over the century this data spans. Offering candidates and matching them
+    against closures the price series actually shows keeps the classifier from depending
+    on a rule being remembered correctly -- an unmatched closure is excluded and printed,
+    never silently relabelled.
+    """
+    out = [d]
+    if d.weekday() == 5:
+        out.append(d - pd.Timedelta(days=1))
+    elif d.weekday() == 6:
+        out.append(d + pd.Timedelta(days=1))
+    return out
+
+
+def us_market_holiday_candidates(year: int) -> dict:
+    """Candidate closure dates for the nine scheduled NYSE holidays of ``year``.
+
+    Returns {holiday name -> [candidate Timestamps]}. These are CANDIDATES, not a claim
+    that the exchange was shut: whether it was is decided by the price series (see
+    ``scheduled_closures``). Martin Luther King Jr. Day is offered from 1998, the first
+    year the NYSE observed it. Washington's Birthday and Memorial Day are offered both on
+    their pre-1971 fixed dates and on their post-Uniform-Monday-Holiday-Act Mondays, so
+    the same function spans the whole sample.
+    """
+    h = {
+        "New Year's Day": _observance_candidates(pd.Timestamp(year=year, month=1, day=1)),
+        "Good Friday": [easter_sunday(year) - pd.Timedelta(days=2)],
+        "Independence Day": _observance_candidates(pd.Timestamp(year=year, month=7, day=4)),
+        "Labor Day": [_nth_weekday(year, 9, 0, 1)],
+        "Thanksgiving": [_nth_weekday(year, 11, 3, 4)],
+        "Christmas Day": _observance_candidates(pd.Timestamp(year=year, month=12, day=25)),
+        "Washington's Birthday": ([_nth_weekday(year, 2, 0, 3)] +
+                                  _observance_candidates(pd.Timestamp(year=year, month=2, day=22))),
+        "Memorial Day": ([_nth_weekday(year, 5, 0, -1)] +
+                         _observance_candidates(pd.Timestamp(year=year, month=5, day=30))),
+    }
+    if year >= 1998:
+        h["Martin Luther King Jr. Day"] = [_nth_weekday(year, 1, 0, 3)]
+    return h
+
+
+def _forward_observance(d: pd.Timestamp) -> list:
+    """UK substitution: a holiday on a weekend moves FORWARD to the next weekday.
+
+    Unlike the NYSE, which moves a Saturday holiday back to the Friday, the UK always
+    moves forward, and Christmas and Boxing Day cascade into each other (25th on a
+    Saturday gives substitutes on the Monday and Tuesday). The Tuesday is offered for
+    that cascade; an unmatched day is excluded and printed either way.
+    """
+    out = [d]
+    if d.weekday() >= 5:
+        nxt = d + pd.Timedelta(days=(7 - d.weekday()))
+        out += [nxt, nxt + pd.Timedelta(days=1)]
+    return out
+
+
+def uk_market_holiday_candidates(year: int) -> dict:
+    """Candidate closure dates for the eight scheduled LSE holidays of ``year``.
+
+    England and Wales bank holidays as they have stood since 1978 (Early May added that
+    year), which covers the whole FTSE 100 series from 1984. Ad-hoc royal closures --
+    jubilees, the 2011 wedding, the 2022 funeral, the 2023 coronation -- are deliberately
+    NOT here: they are not scheduled, they land in the unscheduled bucket, and they are
+    printed. Overlap with the NYSE list is only New Year's Day, Good Friday and Christmas
+    Day; Easter Monday, Boxing Day and the three bank holidays are UK-only.
+    """
+    easter = easter_sunday(year)
+    return {
+        "New Year's Day": _forward_observance(pd.Timestamp(year=year, month=1, day=1)),
+        "Good Friday": [easter - pd.Timedelta(days=2)],
+        "Easter Monday": [easter + pd.Timedelta(days=1)],
+        "Early May Bank Holiday": [_nth_weekday(year, 5, 0, 1)],
+        "Spring Bank Holiday": [_nth_weekday(year, 5, 0, -1)],
+        "Summer Bank Holiday": [_nth_weekday(year, 8, 0, -1)],
+        "Christmas Day": _forward_observance(pd.Timestamp(year=year, month=12, day=25)),
+        "Boxing Day": _forward_observance(pd.Timestamp(year=year, month=12, day=26)),
+    }
+
+
+HOLIDAY_CALENDARS = {"US": us_market_holiday_candidates, "UK": uk_market_holiday_candidates}
+
+
+def scheduled_closures(index: pd.DatetimeIndex, start=None, end=None, calendar: str = "US"):
+    """Split the weekdays missing from a trading calendar into scheduled and unscheduled.
+
+    A price index has no row on a day the exchange was shut, so a closure is a weekday
+    absent from ``index``. Most are the nine scheduled holidays; the rest are unscheduled
+    -- 2001-09-11 and the sessions after it, Hurricane Sandy, funerals, weather. The day
+    before an unscheduled closure is the day the market fell, so the two must not be mixed.
+
+    Returns (scheduled, unscheduled): a Series of holiday name indexed by closure date,
+    and a DatetimeIndex of everything unclassified. Nothing is dropped silently -- every
+    missing weekday lands in exactly one of the two.
+    """
+    idx = pd.DatetimeIndex(index)
+    lo = pd.Timestamp(start) if start is not None else idx[0]
+    hi = pd.Timestamp(end) if end is not None else idx[-1]
+    idx = idx[(idx >= lo) & (idx <= hi)]
+    missing = pd.bdate_range(idx[0], idx[-1]).difference(idx)
+    try:
+        rule = HOLIDAY_CALENDARS[calendar]
+    except KeyError:
+        raise ValueError(f"calendar must be one of {sorted(HOLIDAY_CALENDARS)}")
+    # two passes: every holiday's NOMINAL date first, substitutes only afterwards. One pass
+    # lets an earlier holiday's substitute claim a later holiday's own nominal date -- with
+    # Christmas on a Sunday, Christmas's substitute Monday would otherwise take 26 December
+    # and Boxing Day would never be labelled at all.
+    lookup = {}
+    for nominal_only in (True, False):
+        for y in range(idx[0].year - 1, idx[-1].year + 2):
+            for name, cands in rule(y).items():
+                for c in (cands[:1] if nominal_only else cands[1:]):
+                    lookup.setdefault(c, name)
+    names = [lookup.get(d) for d in missing]
+    hit = [n is not None for n in names]
+    scheduled = pd.Series([n for n in names if n is not None],
+                          index=missing[hit], name="holiday")
+    return scheduled, missing[[not x for x in hit]]
+
+
+def preceding_sessions(index: pd.DatetimeIndex, dates: Iterable) -> pd.Series:
+    """The last trading session strictly before each date, de-duplicated.
+
+    A session that precedes two closures is one event, not two. Returns a Series of the
+    triggering closure date indexed by the event session, ascending; where a session
+    precedes several closures the earliest is kept.
+    """
+    idx = pd.DatetimeIndex(index)
+    d = pd.DatetimeIndex(pd.to_datetime(pd.Series(list(dates)))).sort_values()
+    pos = idx.searchsorted(d, side="left") - 1
+    ok = pos >= 0
+    ev = pd.Series(d[ok], index=idx[pos[ok]], name="closure")
+    return ev[~ev.index.duplicated(keep="first")].sort_index()
+
+
 # ----------------------------------------------------------------------------- alignment
 
 def align_dates(event_dates: Iterable, index: pd.DatetimeIndex) -> np.ndarray:

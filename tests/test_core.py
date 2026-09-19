@@ -163,6 +163,86 @@ def test_calendar_month_table_shape_and_bonferroni_flag():
     assert core.calendar_month_table(m2).loc[9, "bonferroni12"]
 
 
+def test_easter_and_nth_weekday_rules():
+    """Known dates. Easter 1963-04-14, 2000-04-23, 2021-04-04, 2024-03-31; Good Friday is -2 days.
+    Thanksgiving 2024-11-28, Labor Day 2024-09-02, last Monday of May 2024 = 2024-05-27,
+    third Monday of January 2024 = 2024-01-15."""
+    assert core.easter_sunday(1963) == pd.Timestamp("1963-04-14")
+    assert core.easter_sunday(2000) == pd.Timestamp("2000-04-23")
+    assert core.easter_sunday(2021) == pd.Timestamp("2021-04-04")
+    assert core.easter_sunday(2024) == pd.Timestamp("2024-03-31")
+    assert core.us_market_holiday_candidates(2024)["Good Friday"] == [pd.Timestamp("2024-03-29")]
+    assert core._nth_weekday(2024, 11, 3, 4) == pd.Timestamp("2024-11-28")
+    assert core._nth_weekday(2024, 9, 0, 1) == pd.Timestamp("2024-09-02")
+    assert core._nth_weekday(2024, 5, 0, -1) == pd.Timestamp("2024-05-27")
+    assert core._nth_weekday(2024, 1, 0, 3) == pd.Timestamp("2024-01-15")
+
+
+def test_mlk_offered_only_from_1998():
+    """The NYSE first observed MLK Day in 1998; before that it must not be a candidate,
+    or a 1990 January closure would be mislabelled instead of reported as unscheduled."""
+    assert "Martin Luther King Jr. Day" not in core.us_market_holiday_candidates(1997)
+    assert "Martin Luther King Jr. Day" in core.us_market_holiday_candidates(1998)
+
+
+def test_scheduled_closures_separates_unscheduled_ones():
+    """Proved by making it fail: drop a real holiday AND an ordinary Thursday from the same
+    calendar. The holiday must be named; the ordinary day must come back as unscheduled and
+    must NOT be silently absorbed."""
+    idx = pd.bdate_range("2024-01-01", "2024-12-31")
+    idx = idx.drop([pd.Timestamp("2024-07-04"), pd.Timestamp("2024-03-14")])
+    sched, unsched = core.scheduled_closures(idx)
+    assert sched.get(pd.Timestamp("2024-07-04")) == "Independence Day"
+    assert pd.Timestamp("2024-03-14") in unsched
+    assert pd.Timestamp("2024-07-04") not in unsched
+    # every missing weekday lands in exactly one bucket, none is dropped
+    missing = pd.bdate_range(idx[0], idx[-1]).difference(idx)
+    assert len(sched) + len(unsched) == len(missing)
+
+
+def test_uk_calendar_rules_and_forward_substitution():
+    """Known UK dates. 2024: Good Friday 03-29, Easter Monday 04-01, Early May 05-06,
+    Spring 05-27, Summer 08-26. The UK moves a weekend holiday FORWARD, unlike the NYSE:
+    Christmas 2021 fell on a Saturday, so the 27th must be among its candidates and the
+    24th must NOT be."""
+    c = core.uk_market_holiday_candidates(2024)
+    assert c["Good Friday"] == [pd.Timestamp("2024-03-29")]
+    assert c["Easter Monday"] == [pd.Timestamp("2024-04-01")]
+    assert c["Early May Bank Holiday"] == [pd.Timestamp("2024-05-06")]
+    assert c["Spring Bank Holiday"] == [pd.Timestamp("2024-05-27")]
+    assert c["Summer Bank Holiday"] == [pd.Timestamp("2024-08-26")]
+    x = core.uk_market_holiday_candidates(2021)["Christmas Day"]
+    assert pd.Timestamp("2021-12-27") in x and pd.Timestamp("2021-12-24") not in x
+    # Boxing Day 2021 fell on the Sunday; its substitute cascaded to the Tuesday
+    assert pd.Timestamp("2021-12-28") in core.uk_market_holiday_candidates(2021)["Boxing Day"]
+
+
+def test_calendars_are_distinct_and_unknown_one_is_refused():
+    """Proved by making it fail: Easter Monday is a UK closure and not a US one, so the
+    same missing day must classify under UK and fall to unscheduled under US."""
+    idx = pd.bdate_range("2024-01-01", "2024-12-31").drop([pd.Timestamp("2024-04-01")])
+    uk_s, uk_u = core.scheduled_closures(idx, calendar="UK")
+    us_s, us_u = core.scheduled_closures(idx, calendar="US")
+    assert uk_s.get(pd.Timestamp("2024-04-01")) == "Easter Monday"
+    assert pd.Timestamp("2024-04-01") in us_u
+    try:
+        core.scheduled_closures(idx, calendar="DK")
+        raise AssertionError("an unknown calendar must be refused, not silently defaulted")
+    except ValueError:
+        pass
+
+
+def test_preceding_sessions_deduplicates_a_shared_session():
+    """Two closures back to back share one preceding session -- that is one event, not two,
+    and the earliest closure is the one kept."""
+    idx = pd.bdate_range("2024-12-01", "2024-12-31").drop(
+        [pd.Timestamp("2024-12-25"), pd.Timestamp("2024-12-26")])
+    ev = core.preceding_sessions(idx, [pd.Timestamp("2024-12-25"), pd.Timestamp("2024-12-26")])
+    assert len(ev) == 1
+    assert ev.index[0] == pd.Timestamp("2024-12-24")
+    assert ev.iloc[0] == pd.Timestamp("2024-12-25")
+
+
 if __name__ == "__main__":
     tests = [(k, v) for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
     failed = 0
